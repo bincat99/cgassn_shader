@@ -6,7 +6,7 @@
 
 void renderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_QUADS, 0, 4);
 	glutSwapBuffers();
 }
 
@@ -36,16 +36,17 @@ int main(int argc, char **argv)
 		shaderUtil.Load("shaders/vs.shader", "shaders/fs.shader");
 
 		// Points for triangle
-		float points[6] = {
+		float points[8] = {
 
 			// Left
 			-0.8f, -0.5f,
-
+			//Right
+			0.8f, -0.5f,
 			// Top
-			0.0f, 0.9f,
+			0.8f, 0.9f,
 
 			// Right
-			0.5f, -0.7f
+			-0.8f, 0.9f
 		};
 
 		unsigned int buffer;
@@ -57,10 +58,16 @@ int main(int argc, char **argv)
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
 		// Init buffer
-		glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), points, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), points, GL_STATIC_DRAW);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+		unsigned int VAO;
+		glGenVertexArrays(1, &VAO);
+		glBindVertexArray(VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, buffer);
+		unsigned int loc = glGetAttribLocation(shaderUtil.getProgram(), "position");
+		glEnableVertexAttribArray(loc);
+		glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
 		shaderUtil.Use();
 		glutDisplayFunc(renderScene);

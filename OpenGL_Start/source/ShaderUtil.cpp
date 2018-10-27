@@ -66,3 +66,7 @@ void ShaderUtil::Delete()
 	glDeleteProgram(mProgramId);
 }
 
+
+unsigned int ShaderUtil::getProgram() {
+	return mProgramId;
+}
