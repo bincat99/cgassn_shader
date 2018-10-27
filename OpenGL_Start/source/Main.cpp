@@ -4,13 +4,52 @@
 
 #include "ShaderUtil.h"
 
+ShaderUtil shaderUtil;
+unsigned int buffer;
+unsigned int VAO;
+
 void renderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
+	glBindVertexArray(VAO);
 	glDrawArrays(GL_QUADS, 0, 4);
 	glutSwapBuffers();
 }
 
+void Vertexinit() {
 
+	// Points for rectangle
+	float points[8] = {
+
+		// Left
+		-0.8f, -0.5f,
+		//Right
+		0.8f, -0.5f,
+		// Top
+		0.8f, 0.9f,
+
+		// Right
+		-0.8f, 0.9f
+	};
+
+
+	// Create a buffer
+	glGenBuffers(1, &buffer);
+
+	// Bind the buffer to vertx attributes
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
+	// Init buffer
+	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), points, GL_STATIC_DRAW);
+
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	unsigned int loc = glGetAttribLocation(shaderUtil.getProgram(), "position");
+	glEnableVertexAttribArray(loc);
+	glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
+}
 int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
@@ -32,43 +71,10 @@ int main(int argc, char **argv)
 
 		// TODO: Create and compile shaders here (vertex and fragment shaders)
 		// and finally draw something with modern OpenGL!
-		ShaderUtil shaderUtil;
 		shaderUtil.Load("shaders/vs.shader", "shaders/fs.shader");
 
-		// Points for triangle
-		float points[8] = {
 
-			// Left
-			-0.8f, -0.5f,
-			//Right
-			0.8f, -0.5f,
-			// Top
-			0.8f, 0.9f,
-
-			// Right
-			-0.8f, 0.9f
-		};
-
-		unsigned int buffer;
-
-		// Create a buffer
-		glGenBuffers(1, &buffer);
-
-		// Bind the buffer to vertx attributes
-		glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-		// Init buffer
-		glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), points, GL_STATIC_DRAW);
-
-		unsigned int VAO;
-		glGenVertexArrays(1, &VAO);
-		glBindVertexArray(VAO);
-
-		glBindBuffer(GL_ARRAY_BUFFER, buffer);
-		unsigned int loc = glGetAttribLocation(shaderUtil.getProgram(), "position");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
-
+		Vertexinit();
 		shaderUtil.Use();
 		glutDisplayFunc(renderScene);
 
