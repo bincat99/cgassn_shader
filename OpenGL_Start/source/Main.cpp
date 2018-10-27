@@ -1,5 +1,8 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
 #include "ShaderUtil.h"
@@ -7,9 +10,14 @@
 ShaderUtil shaderUtil;
 unsigned int buffer;
 unsigned int VAO;
+unsigned int matrix_loc;
+
+glm::mat4 ctm;
 
 void renderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
+	ctm = glm::mat4(1.0f);
+	glUniformMatrix4fv(matrix_loc, 1, GL_TRUE, glm::value_ptr(ctm));
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_QUADS, 0, 4);
 	glutSwapBuffers();
@@ -21,14 +29,14 @@ void Vertexinit() {
 	float points[8] = {
 
 		// Left
-		-0.8f, -0.5f,
+		-0.6f, -0.6f,
 		//Right
-		0.8f, -0.5f,
+		0.4f, -0.6f,
 		// Top
-		0.8f, 0.9f,
+		0.4f, 0.4f,
 
 		// Right
-		-0.8f, 0.9f
+		-0.6f, 0.4f
 	};
 
 
@@ -47,7 +55,7 @@ void Vertexinit() {
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	unsigned int loc = glGetAttribLocation(shaderUtil.getProgram(), "position");
 	glEnableVertexAttribArray(loc);
-	glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+	glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 }
 int main(int argc, char **argv)
@@ -72,6 +80,8 @@ int main(int argc, char **argv)
 		// TODO: Create and compile shaders here (vertex and fragment shaders)
 		// and finally draw something with modern OpenGL!
 		shaderUtil.Load("shaders/vs.shader", "shaders/fs.shader");
+
+		matrix_loc = glGetUniformLocation(shaderUtil.getProgram(), "transform");
 
 
 		Vertexinit();
