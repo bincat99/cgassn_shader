@@ -16,8 +16,8 @@ glm::mat4 ctm;
 
 void renderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
-	ctm = glm::mat4(1.0f);
-	glUniformMatrix4fv(matrix_loc, 1, GL_TRUE, glm::value_ptr(ctm));
+	ctm = glm::transpose(glm::translate(glm::mat4(1.0f), glm::vec3(-0.3f,0.0f,0.0f)));
+	glUniformMatrix4fv(matrix_loc, 1, GL_TRUE, value_ptr(ctm));
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_QUADS, 0, 4);
 	glutSwapBuffers();
